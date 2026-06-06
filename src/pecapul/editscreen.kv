@@ -1,0 +1,168 @@
+
+<EditLessonScreen>:
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            
+    name: "edit_lesson"
+
+    edit_lesson_list: id_edit_lesson_list
+    edit_tag_list: id_edit_tag_list
+    lesson_name: id_lesson_name
+
+    BoxLayout:
+        orientation: "horizontal"
+
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_x: 0.2
+            padding: 20
+
+            Widget:
+                size_hint_y: 0.8
+            
+            Button:
+                size_hint_y: None 
+                height: 25
+                text: "Import"
+            
+            Button:
+                size_hint_y: None
+                height: 25
+                text: "Export"
+
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_x: 0.6
+
+            Label:
+                id: id_lesson_name
+                size_hint_y: .1
+                text: ""
+                font_size: 24
+                color: 0, 0, 0, 1
+                bold: True
+
+            ScrollView:
+                do_scroll_y: True
+                do_scroll_x: False
+                bar_width: 10
+                scroll_type: ['bars', 'content']
+
+                GridLayout:
+                    id: id_edit_lesson_list
+                    size_hint_y: .9
+                    cols: 1
+                    padding: 10
+                    spacing: 10
+
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_x: 0.2
+            padding: 20
+
+            ScrollView:
+                do_scroll_y: True
+                do_scroll_x: False
+                bar_width: 10
+                scroll_type: ['bars', 'content']
+
+                size_hint_y: 1
+
+                GridLayout:
+                    id: id_edit_tag_list
+                    size_hint_y: None
+                    height: self.minimum_height
+                    cols: 1
+                    padding: 10
+                    spacing: 10
+
+            Button:
+                text: "Back"
+                size_hint_y: None
+                height: 25
+                on_release: root.back()
+
+<TagBox>:
+    
+    orientation: "horizontal"
+    text_tag: id_tag_text
+
+    btn_delete: id_tag_delete
+
+    size_hint_y: None 
+    height: 35
+
+    TextInput:
+        id: id_tag_text
+        text: ""
+        multiline: False
+        on_text_validate: root.on_enter_pressed()
+
+    Button:
+        id: id_tag_delete
+        text: "X"
+        size_hint_x: None
+        width: 35
+        color: 1, 0, 0, 1
+        on_release: root.delete_tag()
+
+<TermBox>:
+    canvas.before:
+        Color:
+            rgba: .5, .5, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    orientation: "horizontal"
+    sp_from: id_lang_from_tag
+    text_from: id_term_from_text
+
+    sp_to: id_lang_to_tag
+    text_to: id_term_to_text
+
+    btn_delete: id_lesson_term_delete
+
+    size_hint_y: None 
+    height: 35
+    
+    Spinner:
+        id: id_lang_from_tag
+        size_hint_x: .2
+
+    TextInput:
+        id: id_term_from_text
+        text: ""
+        multiline: False
+        size_hint_x: .4
+        on_text_validate: root.on_enter_pressed()
+
+    Spinner:
+        id: id_lang_to_tag
+        size_hint_x: .2
+
+    TextInput:
+        id: id_term_to_text
+        text: ""
+        multiline: False
+        size_hint_x: .4
+        on_text_validate: root.on_enter_pressed()
+
+    Button:
+        id: id_lesson_term_delete
+        text: "X"
+        size_hint_x: None
+        width: 35
+        color: 1, 0, 0, 1
+        on_release: root.delete_lesson_term()
+
+<AddItemBox>:
+    size_hint_y: None
+    height: 25
+    text: "+"
+    font_size: 32
+    bold: True

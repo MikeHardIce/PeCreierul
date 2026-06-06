@@ -1,0 +1,142 @@
+
+#:import utils kivy.utils
+
+<PeCreierulMenuScreen>:
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    name: "main_menu"
+    LessonPanel:
+        
+<PeCreierulMenu>:
+    canvas.before:
+        Color:
+            rgba: .9, .8, .9, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<LessonGrid>:
+    canvas.before:
+        Color:
+            rgba: .9, .9, .9, 0
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    cols: 6
+    padding: 10
+    spacing: 10
+
+    create_lesson_box: id_create_lesson_box
+
+    AddLessonBox:
+        id: id_create_lesson_box
+        on_release: root.create_lesson()
+
+<AddLessonBox>:
+    canvas.before:
+        Color:
+            rgba: .5, .5, .5, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    
+    size_hint: None, None
+    size: 250, 250
+    text: "+"
+    font_size: 50
+    bold: True
+
+<LessonBox>:
+    canvas.before:
+        Color:
+            rgba: (.7, .7, .7, .3)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    lesson_name: id_lesson_name
+    padding: 20, 20
+    spacing: 20
+    orientation: "vertical"
+    background_color: 0, 0, 0, 0
+    size_hint: None, None
+    size: 250, 250
+
+    Label:
+        id: id_lesson_name
+        font_size: 30
+        text_size: self.width, None
+        color: .2, .2, .2, 1
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: 30
+        spacing: 10
+
+        Button:
+            text: "Train"
+            on_release: root.start_training()
+
+        BoxLayout:
+            orientation: "horizontal"
+
+            Button:
+                text: "Edit"
+                on_release: root.edit_lesson();
+
+            Button:
+                text: "Delete"
+                on_release: root.delete_lesson()
+    
+
+<LessonPanel>:
+    do_scroll_y: True
+    do_scroll_x: False
+    bar_width: 10
+    scroll_type: ['bars', 'content']
+    lesson_grid: id_grid
+
+    LessonGrid:
+        id: id_grid
+        size_hint_y: None
+        height: self.minimum_height
+    
+<NewLessonPopUp>:
+    title: "Create a new Lesson"
+    size_hint: .4, .5
+    input: id_new_lesson_input
+
+    BoxLayout:
+        orientation: "vertical"
+        pos_hint: {"top":1}
+        
+        size_hint_y: None
+        height: self.minimum_height
+
+        BoxLayout:
+            orientation: "horizontal"
+            padding: 40
+            spacing: 20
+            TextInput:
+                id: id_new_lesson_input
+                text: ""
+                multiline: False
+                focus: True
+                hint_text: "Enter your lesson name here ..."
+                size_hint_y: None
+                size_hint_x: .75
+                height: 40
+                on_text_validate: root.create_lesson()
+                
+            Button:
+                text: "Create"
+                size_hint_y: None
+                size_hint_x: .25
+                height:40
+                on_release: root.create_lesson()
