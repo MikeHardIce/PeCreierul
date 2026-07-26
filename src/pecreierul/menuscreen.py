@@ -21,9 +21,9 @@ from sqlalchemy.orm import Session
 from pecreierul.app import PeCreierulBaseApp
 from pecreierul.database import Lesson
 from pecreierul.editscreen import EditLessonScreen
+from pecreierul.trainscreen import TrainLessonScreen
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), 'menuscreen.kv'))
-
 
 class NewLessonPopUp(ModalView):
 
@@ -56,7 +56,16 @@ class LessonBox(BoxLayout):
     grid: GridLayout
 
     def start_training(self):
-        pass
+        app: PeCreierulBaseApp | None = App.get_running_app()
+
+        if app is None:
+            return
+
+        train_lesson: TrainLessonScreen = app.manager.get_screen("train_lesson")
+
+        train_lesson.lesson_id = self.lesson_id
+
+        app.manager.current = "train_lesson"
 
     def edit_lesson(self):
         app: PeCreierulBaseApp | None = App.get_running_app()
@@ -101,11 +110,12 @@ class LessonGrid(GridLayout):
 
         with Session(app.engine) as session:
             lessons = app.trainer.load_all_lessons(session)
-            
+
+            # clean up all shown lesson boxes
             for wdg in self.children:
                 if isinstance(wdg, LessonBox):
                     self.remove_widget(wdg)
-            
+
             for lesson in lessons:
                 self.add_lesson_box(lesson)
 

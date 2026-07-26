@@ -56,19 +56,36 @@ class TermBox(BoxLayout):
                 tags: List[Tag] = app.trainer.load_all_tags(session)
                 tag_from = next(filter(lambda x: x.name == self.sp_from.text, tags), None)
                 tag_to = next(filter(lambda x: x.name == self.sp_to.text, tags), None)
-
+                
                 if tag_from is not None and tag_to is not None:
-                    lesson_term = LessonTerm(term1 = Term(value=self.text_from.text, tag=tag_from), term2 = Term(value = self.text_to.text, tag = tag_to))
 
-                    lesson.lesson_terms.append(lesson_term)
+                    lesson_term = next(filter(lambda x: x.id == self.lesson_term_id, lesson.lesson_terms), None)
+
+                    is_update = lesson_term is not None
+
+                    if is_update:
+                        lesson_term.term1.value = self.text_from.text
+                        lesson_term.term2.value = self.text_to.text
+
+                        if lesson_term.term1.tag.id != tag_from.id:
+                            lesson_term.term1.tag = tag_from
+
+                        if lesson_term.term2.tag_id != tag_to.id:
+                            lesson_term.term2.tag = tag_to
+                        
+                    else:
+                        lesson_term = LessonTerm(term1 = Term(value=self.text_from.text, tag=tag_from), term2 = Term(value = self.text_to.text, tag = tag_to))
+
+                        lesson.lesson_terms.append(lesson_term)
 
                     app.trainer.save_lessons(session, [lesson])
 
                     session.commit()
 
                     self.lesson_term_id = lesson_term.id
-                    
-                    editLesson.add_empty_termbox(tags, tag_from.name, tag_to.name)
+
+                    if not is_update:
+                        editLesson.add_empty_termbox(tags, tag_from.name, tag_to.name)
 
             except Exception as ex:
                 print(ex)

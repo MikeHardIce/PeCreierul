@@ -7,6 +7,7 @@ from pecreierul.app import PeCreierulBaseApp
 from pecreierul.database import Base
 from pecreierul.editscreen import EditLessonScreen
 from pecreierul.menuscreen import PeCreierulMenuScreen
+from pecreierul.trainscreen import TrainLessonScreen
 from pecreierul.trainer import Trainer
 
 Window.top = 50
@@ -28,6 +29,7 @@ class PeCreierulApp(PeCreierulBaseApp):
 
         self.manager.add_widget(PeCreierulMenuScreen(name="main_menu"))
         self.manager.add_widget(EditLessonScreen(name="edit_lesson"))
+        self.manager.add_widget(TrainLessonScreen(name="train_lesson"))
 
         return self.manager
 
