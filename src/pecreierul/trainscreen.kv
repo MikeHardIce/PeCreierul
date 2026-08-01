@@ -7,3 +7,55 @@
             size: self.size
 
     name: "train_lesson"
+
+    BoxLayout:
+        orientation: "vertical"
+        
+        Label:
+            id: id_lesson_name
+            size_hint_y: .1
+            text: "Test"
+            font_size: 24
+            color: 0, 0, 0, 1
+            bold: True
+        
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: .7
+            padding: 40
+            Label:
+                id: id_question
+                text: "Question"
+                font_size: 24
+                color: 0, 0, 0, 1
+
+            TextAnswerBox:
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: .2
+            padding: 20
+
+            Widget:
+                size_hint_x: .8
+
+            Button: 
+                size_hint_y: None
+                size_hint_x: .2
+                height: 25
+                text: "Back"
+                on_release: root.back()
+
+<TextAnswerBox>:
+    
+    orientation: "vertical"
+
+    Widget: 
+        size_hint_y: .45
+    TextInput:
+        id: id_answerbox
+        size_hint_y: .1
+    Widget:
+        size_hint_y: .45
+
+<MultipleChoiceAnswerBox>:
