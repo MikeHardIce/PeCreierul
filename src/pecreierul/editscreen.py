@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Optional, cast
 
 from sqlalchemy.orm import Session
 from kivy.uix.boxlayout import BoxLayout
@@ -14,7 +14,7 @@ from kivy.app import App
 from kivy.lang import Builder
 
 from pecreierul.app import PeCreierulBaseApp
-from pecreierul.trainer import Trainer
+from pecreierul.lesson_repository import LessonRepository
 from pecreierul.database import LessonTerm, Tag, Lesson, Term
 
 
@@ -51,9 +51,9 @@ class TermBox(BoxLayout):
         lesson_id = editLesson.lesson_id
         with Session(app.engine) as session:
             try:
-                trainer: Trainer = app.trainer
-                lesson: Lesson = trainer.load_lesson_by_id(session, lesson_id)
-                tags: List[Tag] = app.trainer.load_all_tags(session)
+                repository: LessonRepository = app.repository
+                lesson: Lesson = repository.load_lesson_by_id(session, lesson_id)
+                tags: List[Tag] = app.repository.load_all_tags(session)
                 tag_from = next(filter(lambda x: x.name == self.sp_from.text, tags), None)
                 tag_to = next(filter(lambda x: x.name == self.sp_to.text, tags), None)
                 
@@ -78,7 +78,7 @@ class TermBox(BoxLayout):
 
                         lesson.lesson_terms.append(lesson_term)
 
-                    app.trainer.save_lessons(session, [lesson])
+                    app.repository.save_lessons(session, [lesson])
 
                     session.commit()
 
@@ -101,14 +101,14 @@ class TermBox(BoxLayout):
         lesson_id = editLesson.lesson_id
         with Session(app.engine) as session:
             try:
-                trainer: Trainer = app.trainer
-                lesson: Lesson = trainer.load_lesson_by_id(session, lesson_id)
+                repository: LessonRepository = app.repository
+                lesson: Lesson = repository.load_lesson_by_id(session, lesson_id)
 
                 to_be_deleted = next(filter(lambda x: x.id == self.lesson_term_id, lesson.lesson_terms), None)
 
                 if to_be_deleted is not None:
                     lesson.lesson_terms.remove(to_be_deleted)
-                    trainer.save_lessons(session, [lesson])
+                    repository.save_lessons(session, [lesson])
                 
                 session.commit()
 
@@ -140,7 +140,7 @@ class TagBox(BoxLayout):
                 if self.tag_id > -1:
                     tag.id = self.tag_id
 
-                app.trainer.save_tag(session, tag)
+                app.repository.save_tag(session, tag)
 
                 session.commit()
 
@@ -165,7 +165,7 @@ class TagBox(BoxLayout):
         
         with Session(app.engine) as session:
             try:
-                app.trainer.delete_tag_by_id(session, self.tag_id)
+                app.repository.delete_tag_by_id(session, self.tag_id)
                 session.commit()
 
                 editLesson: EditLessonScreen = app.manager.get_screen("edit_lesson")
@@ -196,7 +196,7 @@ class EditLessonScreen(Screen):
 
     def on_pre_enter(self, *args):
         
-        self.app = App.get_running_app()
+        self.app  = App.get_running_app()
 
         if self.app is None:
             return
@@ -205,8 +205,8 @@ class EditLessonScreen(Screen):
         self.edit_tag_list.clear_widgets()
 
         with Session(self.app.engine) as session:
-            lesson: Lesson = self.app.trainer.load_lesson_by_id(session, self.lesson_id)
-            tags: List[Tag] = self.app.trainer.load_all_tags(session)
+            lesson: Lesson = self.app.repository.load_lesson_by_id(session, self.lesson_id)
+            tags: List[Tag] = self.app.repository.load_all_tags(session)
             self.lesson_name.text = lesson.name
 
             last_from_tag = ""

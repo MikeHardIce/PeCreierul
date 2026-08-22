@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+from typing import cast
 from kivy.app import App 
 from kivy.lang import Builder
 from kivy.uix.gridlayout import GridLayout
@@ -43,7 +44,7 @@ class NewLessonPopUp(ModalView):
                 lesson = Lesson()
                 lesson.name = self.input.text
                 lesson.description = ""
-                app.trainer.save_lessons(session,[lesson])
+                app.repository.save_lessons(session,[lesson])
                 session.commit()
                 self.grid.add_lesson_box(lesson)
 
@@ -86,9 +87,9 @@ class LessonBox(BoxLayout):
             return
 
         with Session(app.engine) as session:
-            lesson = app.trainer.load_lesson_by_id(session, self.lesson_id)
+            lesson = app.repository.load_lesson_by_id(session, self.lesson_id)
             if len(lesson.lesson_terms) < 1:
-                app.trainer.delete_lessons(session, [lesson])
+                app.repository.delete_lessons(session, [lesson])
                 session.commit()
 
         self.grid.remove_widget(self)
@@ -103,13 +104,13 @@ class LessonGrid(GridLayout):
         Clock.schedule_once(self.load_lessons, 0)
 
     def load_lessons(self, dt):
-        app: PeCreierulBaseApp | None = App.get_running_app()
+        app: PeCreierulBaseApp | None = cast(PeCreierulBaseApp, App.get_running_app())
         
         if app is None:
             return
 
         with Session(app.engine) as session:
-            lessons = app.trainer.load_all_lessons(session)
+            lessons = app.repository.load_all_lessons(session)
 
             # clean up all shown lesson boxes
             for wdg in self.children:

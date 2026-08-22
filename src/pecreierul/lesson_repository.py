@@ -1,4 +1,6 @@
-from typing import List
+from collections import deque
+import random
+from typing import Dict, List, Tuple
 from dataclasses import dataclass
 from sqlalchemy import Engine, select
 from sqlalchemy.orm import Session
@@ -10,10 +12,7 @@ class Paging:
     page_from: int = 0
     page_to: int = 10
 
-class TrainingSession:
-    pass
-
-class Trainer:
+class LessonRepository:
 
     def delete_lessons(self, session: Session, lessons: List[Lesson]):
         for lesson in lessons:

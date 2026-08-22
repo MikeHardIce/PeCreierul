@@ -7,6 +7,10 @@
             size: self.size
 
     name: "train_lesson"
+    lesson_name: id_lesson_name
+    text_answer_box: id_text_answer_box
+    progress_stack: id_progress_stack
+    text_question_box: id_question
 
     BoxLayout:
         orientation: "vertical"
@@ -30,14 +34,19 @@
                 color: 0, 0, 0, 1
 
             TextAnswerBox:
+                id: id_text_answer_box
 
         BoxLayout:
             orientation: "horizontal"
             size_hint_y: .2
             padding: 20
 
+            ProgressStacks:
+                id: id_progress_stack
+                size_hint_x: .4
+
             Widget:
-                size_hint_x: .8
+                size_hint_x: .4
 
             Button: 
                 size_hint_y: None
@@ -45,9 +54,9 @@
                 height: 25
                 text: "Back"
                 on_release: root.back()
-
-<TextAnswerBox>:
     
+<TextAnswerBox>:
+    text_answer: id_answerbox
     orientation: "vertical"
 
     Widget: 
@@ -55,6 +64,8 @@
     TextInput:
         id: id_answerbox
         size_hint_y: .1
+        multiline: False
+        on_text_validate: root.on_enter_pressed()
     Widget:
         size_hint_y: .45
 

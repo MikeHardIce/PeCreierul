@@ -8,7 +8,7 @@ from pecreierul.database import Base
 from pecreierul.editscreen import EditLessonScreen
 from pecreierul.menuscreen import PeCreierulMenuScreen
 from pecreierul.trainscreen import TrainLessonScreen
-from pecreierul.trainer import Trainer
+from pecreierul.lesson_repository import LessonRepository
 
 Window.top = 50
 Window.left = 100
@@ -24,7 +24,7 @@ class PeCreierulApp(PeCreierulBaseApp):
     
         Base.metadata.create_all(self.engine)
 
-        self.trainer = Trainer()
+        self.repository = LessonRepository()
         self.manager = PeCreierulWindowManager()
 
         self.manager.add_widget(PeCreierulMenuScreen(name="main_menu"))
