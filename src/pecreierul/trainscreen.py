@@ -45,7 +45,7 @@ class TrainLessonScreen(Screen):
             number_of_sessions = len(lesson.lesson_terms) 
             number_of_sessions = 10 if number_of_sessions > 10 else number_of_sessions
             train: dict[str, str] = {}
-            for lesson_term in random.choices(lesson.lesson_terms, k = number_of_sessions):
+            for lesson_term in random.sample(lesson.lesson_terms, k = number_of_sessions):
                 train[lesson_term.term1.value] = lesson_term.term2.value
 
         self.training_session = TrainingSession(train)
