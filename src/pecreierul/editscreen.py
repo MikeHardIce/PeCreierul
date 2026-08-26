@@ -191,7 +191,7 @@ class EditLessonScreen(Screen):
     def on_import_pressed(self):
         content = BoxLayout(orientation="vertical")
         chooser = FileChooserListView()
-        btn_select = Button(text="Select", size_hint_y= .15)
+        btn_select = Button(text="Import", size_hint_y= .15)
         chooser.path = os.path.dirname(__file__)
         content.add_widget(chooser)
         content.add_widget(btn_select)
@@ -224,7 +224,33 @@ class EditLessonScreen(Screen):
         popup.open()
 
     def on_export_pressed(self):
-        pass
+        def is_dir(directory, filename):
+            return os.path.isdir(os.path.join(directory, filename))
+        
+        content = BoxLayout(orientation="vertical")
+        chooser = FileChooserListView(dirselect=True)
+        chooser.filters = [is_dir]
+        btn_select = Button(text="Export", size_hint_y= .15)
+        chooser.path = os.path.dirname(__file__)
+        content.add_widget(chooser)
+        content.add_widget(btn_select)
+
+        popup = Popup(title="Choose a folder the lesson should be exported to", content=content, size_hint=(0.9, 0.9))
+
+        def export_lesson(btn):
+            
+            if chooser.selection and len(chooser.selection) > 0 and os.path.isdir(chooser.selection[0]):
+                print("Exporting Lesson")
+                app = PeCreierulBaseApp.get_running_app()
+                with Session(app.engine) as session:
+                    lesson = app.repository.load_lesson_by_id(session, self.lesson_id)
+                    ImporterExporter.export_lesson(lesson, os.path.join(chooser.selection[0], f"{lesson.name}.csv"))
+
+            popup.dismiss()
+
+        btn_select.bind(on_release= export_lesson) # type: ignore
+
+        popup.open()
 
     def back(self):
         
