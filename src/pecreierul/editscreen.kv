@@ -28,11 +28,13 @@
                 size_hint_y: None 
                 height: 25
                 text: "Import"
+                on_release: root.on_import_pressed()
             
             Button:
                 size_hint_y: None
                 height: 25
                 text: "Export"
+                on_release: root.on_export_pressed()
 
         BoxLayout:
             orientation: "vertical"
@@ -87,7 +89,6 @@
                 on_release: root.back()
 
 <TagBox>:
-    
     orientation: "horizontal"
     text_tag: id_tag_text
 

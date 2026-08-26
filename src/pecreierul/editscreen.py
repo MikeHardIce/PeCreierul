@@ -9,11 +9,14 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.screenmanager import Screen
 from kivy.uix.spinner import Spinner
+from kivy.uix.popup import Popup
 from kivy.properties import ObjectProperty
 from kivy.app import App
 from kivy.lang import Builder
+from kivy.uix.filechooser import FileChooserListView
 
 from pecreierul.app import PeCreierulBaseApp
+from pecreierul.importer_exporter import ImporterExporter
 from pecreierul.lesson_repository import LessonRepository
 from pecreierul.database import LessonTerm, Tag, Lesson, Term
 
@@ -185,28 +188,61 @@ class EditLessonScreen(Screen):
     edit_tag_list: GridLayout = ObjectProperty(None)
     lesson_name: Label = ObjectProperty(None)
 
-    app: PeCreierulBaseApp | None
+    def on_import_pressed(self):
+        content = BoxLayout(orientation="vertical")
+        chooser = FileChooserListView()
+        btn_select = Button(text="Select", size_hint_y= .15)
+        chooser.path = os.path.dirname(__file__)
+        content.add_widget(chooser)
+        content.add_widget(btn_select)
+
+        popup = Popup(title="Select a lesson file", content=content, size_hint=(0.9, 0.9))
+
+        def import_lesson(btn):
+            
+            if chooser.selection and len(chooser.selection) > 0 and os.path.isfile(chooser.selection[0]):
+                print("Importing Lesson")
+                app = PeCreierulBaseApp.get_running_app()
+                with Session(app.engine) as session:
+                    lesson = app.repository.load_lesson_by_id(session, self.lesson_id)
+                    tags = {}
+
+                    for tag in app.repository.load_all_tags(session):
+                        tags[tag.name] = tag
+                    
+                    ImporterExporter.import_lesson(lesson, tags, chooser.selection[0])
+                    app.repository.save_lessons(session, [lesson])
+                    session.commit()
+
+            popup.dismiss()
+
+            self.on_pre_enter()
+
+        
+        btn_select.bind(on_release= import_lesson) # type: ignore
+
+        popup.open()
+
+    def on_export_pressed(self):
+        pass
 
     def back(self):
         
-        if self.app is None:
-            return
+        app = PeCreierulBaseApp.get_running_app()
         
-        self.app.manager.current = "main_menu"
+        app.manager.current = "main_menu"
+
 
     def on_pre_enter(self, *args):
         
-        self.app  = App.get_running_app()
-
-        if self.app is None:
-            return
+        app = PeCreierulBaseApp.get_running_app()
 
         self.edit_lesson_list.clear_widgets()
         self.edit_tag_list.clear_widgets()
 
-        with Session(self.app.engine) as session:
-            lesson: Lesson = self.app.repository.load_lesson_by_id(session, self.lesson_id)
-            tags: List[Tag] = self.app.repository.load_all_tags(session)
+        with Session(app.engine) as session:
+            lesson: Lesson = app.repository.load_lesson_by_id(session, self.lesson_id)
+            tags: List[Tag] = app.repository.load_all_tags(session)
             self.lesson_name.text = lesson.name
 
             last_from_tag = ""

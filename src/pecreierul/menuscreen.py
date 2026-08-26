@@ -32,7 +32,6 @@ class NewLessonPopUp(ModalView):
     input: TextInput = ObjectProperty(None)
 
     def create_lesson(self):
-        print("Adding Lesson ...")
         if not self.input.text.strip() == "":
 
             app: PeCreierulBaseApp | None = App.get_running_app()

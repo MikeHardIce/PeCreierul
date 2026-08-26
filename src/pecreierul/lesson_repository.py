@@ -39,6 +39,7 @@ class LessonRepository:
     def delete_tag_by_id(self, session: Session, id: int) -> None:
         tag = session.scalar(select(Tag).where(Tag.id == id))
         session.delete(tag)
-        
-    def attach_to_lesson(self, lesson: Lesson, term1_str: str, tag1_str: str, term2_str: str, tag2_str: str) -> None:
+
+    @staticmethod 
+    def attach_to_lesson(lesson: Lesson, term1_str: str, tag1_str: str, term2_str: str, tag2_str: str) -> None:
         lesson.lesson_terms.append(LessonTerm(term1=Term(value= term1_str, tag= Tag(name=tag1_str)), term2= Term(value= term2_str, tag= Tag(name=tag2_str))))
