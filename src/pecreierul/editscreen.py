@@ -1,5 +1,5 @@
 import os
-from typing import List, Optional, cast
+from typing import Dict, List, Optional, cast
 
 from sqlalchemy.orm import Session
 from kivy.uix.boxlayout import BoxLayout
@@ -205,7 +205,7 @@ class EditLessonScreen(Screen):
                 app = PeCreierulBaseApp.get_running_app()
                 with Session(app.engine) as session:
                     lesson = app.repository.load_lesson_by_id(session, self.lesson_id)
-                    tags = {}
+                    tags: Dict[str, Tag] = {}
 
                     for tag in app.repository.load_all_tags(session):
                         tags[tag.name] = tag
