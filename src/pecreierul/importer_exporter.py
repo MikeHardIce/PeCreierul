@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 import csv
 from typing import Dict, List
@@ -31,10 +32,23 @@ class ImporterExporter:
         
 
     @staticmethod
-    def export_lesson(lesson: Lesson, lesson_path: str):
+    def export_lesson(lesson: Lesson, lesson_path: str) -> str:
+        """
+            Exports the current lesson to the given path. If a file with that name already exists,
+            a date will be added after the file name and before the file extension
+        """
+        file_split = lesson_path.split(".")
+        *all, file_ext = file_split
+        file_path = ".".join(all)
+
+        if os.path.exists(f"{file_path}.{file_ext}"):
+            lesson_path = f"{file_path}{datetime.now().strftime("%Y%m%d%H%M%S")}.{file_ext}"
+
         with open(lesson_path, mode="w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
             writer.writerow(["question", "answers", "tag_question", "tag_answers"])
             for lesson_term in lesson.lesson_terms:
                 writer.writerow([lesson_term.term1.value.strip(), lesson_term.term1.tag.name
                                  , lesson_term.term2.value.strip(), lesson_term.term2.tag.name])
+
+        return lesson_path

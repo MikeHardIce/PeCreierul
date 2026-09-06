@@ -1,7 +1,8 @@
 import os
-from typing import Dict, List, Optional, cast
-
+from typing import Dict, List
 from sqlalchemy.orm import Session
+from datetime import datetime
+
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
@@ -244,6 +245,7 @@ class EditLessonScreen(Screen):
                 app = PeCreierulBaseApp.get_running_app()
                 with Session(app.engine) as session:
                     lesson = app.repository.load_lesson_by_id(session, self.lesson_id)
+                    
                     ImporterExporter.export_lesson(lesson, os.path.join(chooser.selection[0], f"{lesson.name}.csv"))
 
             popup.dismiss()
