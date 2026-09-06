@@ -131,12 +131,16 @@ class LessonGrid(GridLayout):
         pop.grid = self
         pop.open()
 
-    
 class LessonPanel(ScrollView):
     lesson_grid = ObjectProperty(None)
 
 class PeCreierulMenu(AnchorLayout):
-    pass
+
+    def on_export_pressed(self):
+        pass
+
+    def on_import_pressed(self):
+        pass
 
 class PeCreierulMenuScreen(Screen):
     pass

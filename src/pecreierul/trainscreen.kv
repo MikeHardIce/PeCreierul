@@ -30,7 +30,8 @@
             Label:
                 id: id_question
                 text: "Question"
-                font_size: 24
+                font_size: 32
+                bold: True
                 color: 0, 0, 0, 1
 
             TextAnswerBox:
@@ -57,6 +58,7 @@
     
 <TextAnswerBox>:
     text_answer: id_answerbox
+    text_correct: id_correct
     orientation: "vertical"
 
     Widget: 
@@ -66,7 +68,14 @@
         size_hint_y: .1
         multiline: False
         on_text_validate: root.on_enter_pressed()
+        font_size: 24
+    Label:
+        id: id_correct
+        size_hint_y: .1
+        color: 0.54, 0.0, 0.0, 1.0
+        bold: True
+        font_size: 34
     Widget:
-        size_hint_y: .45
+        size_hint_y: .35
 
 <MultipleChoiceAnswerBox>:

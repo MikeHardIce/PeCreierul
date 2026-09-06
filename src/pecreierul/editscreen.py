@@ -192,6 +192,7 @@ class EditLessonScreen(Screen):
     def on_import_pressed(self):
         content = BoxLayout(orientation="vertical")
         chooser = FileChooserListView()
+
         btn_select = Button(text="Import", size_hint_y= .15)
         chooser.path = os.path.dirname(__file__)
         content.add_widget(chooser)

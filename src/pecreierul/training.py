@@ -52,7 +52,8 @@ class TrainingSession:
                 available_stacks.append(index)
 
         if len(available_stacks) > 0:
-            self.current_stack = random.choice(available_stacks)
+            weigths = [len(available_stacks) - i for i in range(len(available_stacks))]
+            self.current_stack = random.choices(available_stacks, weights=weigths, k=1)[0]
         else:
             return None
 

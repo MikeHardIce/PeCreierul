@@ -5,7 +5,7 @@ def test_basic_training():
 
     question_answers = {"q1":"a1", "q2":"a2", "q3":"a3", "q4":"a4"}
 
-    session = TrainingSession({"q1":"a1", "q2":"a2", "q3":"a3", "q4":"a4"}, 3, 3)
+    session = TrainingSession(question_answers, 3, 3)
 
     unit = session.get_next()
 
@@ -32,7 +32,7 @@ def test_basic_training():
 def test_incorrect_answers():
     question_answers = {"q1":"a1", "q2":"a2", "q3":"a3", "q4":"a4"}
     
-    session = TrainingSession({"q1":"a1", "q2":"a2", "q3":"a3", "q4":"a4"}, 3, 3)
+    session = TrainingSession(question_answers, 3, 3)
 
     unit = session.get_next()
 

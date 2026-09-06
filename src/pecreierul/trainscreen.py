@@ -60,7 +60,12 @@ class TrainLessonScreen(Screen):
         Clock.schedule_once(self.text_answer_box.focus, 0)
 
     def on_answer_submitted(self, answer: str):
-        self.training_session.submit_answer(answer)
+        unit: TrainingUnit | None = self.training_session.current_unit
+
+        if not self.training_session.submit_answer(answer):
+            self.text_answer_box.text_correct.text = unit.answer if unit is not None else ""
+            Clock.schedule_once(self.text_answer_box.reset_label, 5)
+
         self.progress_stack.draw(self.training_session)
 
         unit = self.training_session.get_next()
@@ -71,9 +76,12 @@ class TrainLessonScreen(Screen):
         else:
             self.text_answer_box.disable()     
 
+
+
 class TextAnswerBox(BoxLayout):
     lesson_screen: TrainLessonScreen
     text_answer: TextInput = ObjectProperty(None)
+    text_correct: Label = ObjectProperty(None)
 
     def focus(self, dt = 0):
         self.text_answer.focus = True
@@ -86,6 +94,9 @@ class TextAnswerBox(BoxLayout):
             self.lesson_screen.on_answer_submitted(self.text_answer.text)
 
         self.text_answer.text = ""
+
+    def reset_label(self, dt = 0):
+        self.text_correct.text = ""
 
 class MultipleChoiceAnswerBox(BoxLayout):
     pass

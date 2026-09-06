@@ -10,7 +10,14 @@
             size: self.size
 
     name: "main_menu"
-    LessonPanel:
+    BoxLayout:
+        orientation: "vertical"
+
+        LessonPanel:
+            size_hint_y: .95
+
+        PeCreierulMenu:
+            size_hint_y: .05
         
 <PeCreierulMenu>:
     canvas.before:
@@ -19,6 +26,25 @@
         Rectangle:
             pos: self.pos
             size: self.size
+
+    BoxLayout:
+        orientation: "horizontal"
+
+        Button:
+            size_hint_y: None 
+            size_hint_x: None
+            height: 25
+            width: 250
+            text: "Import"
+            on_release: root.on_import_pressed()
+            
+        Button:
+            size_hint_y: None
+            size_hint_x: None
+            height: 25
+            width: 250
+            text: "Export"
+            on_release: root.on_export_pressed()
 
 <LessonGrid>:
     canvas.before:
