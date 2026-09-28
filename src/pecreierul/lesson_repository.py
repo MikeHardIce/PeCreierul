@@ -16,6 +16,8 @@ class LessonRepository:
 
     def delete_lessons(self, session: Session, lessons: List[Lesson]):
         for lesson in lessons:
+            for lesson_term in lesson.lesson_terms:
+                session.delete(lesson_term)
             session.delete(lesson)
             
     def load_all_lessons(self, session: Session, paging: Paging = Paging(0, 100)) -> List[Lesson]:

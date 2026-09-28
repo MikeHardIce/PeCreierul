@@ -21,8 +21,10 @@ class ImporterExporter:
                     if keys.issubset(row.keys()):
                         entry = (row["question"], row["tag_question"], row["answers"], row["tag_answers"])
                         if entry not in duplicate_catcher:
-                            tag1 = tags[row["tag_question"]] if row["tag_question"] in tags else Tag(name=row["tag_question"])
-                            tag2 = tags[row["tag_answers"]] if row["tag_answers"] in tags else Tag(name=row["tag_answers"])
+                            tag_question = row["tag_question"].strip()
+                            tag_answer = row["tag_answers"].strip()
+                            tag1 = tags[tag_question] if tag_question in tags else Tag(name=tag_question)
+                            tag2 = tags[tag_answer] if tag_answer in tags else Tag(name=tag_answer)
                             lesson_term = LessonTerm()
                             lesson_term.term1 = Term(value = row["question"].strip(), tag = tag1)
                             lesson_term.term2 = Term(value = row["answers"].strip(), tag = tag2)
