@@ -12,6 +12,8 @@
     edit_lesson_list: id_edit_lesson_list
     edit_tag_list: id_edit_tag_list
     lesson_name: id_lesson_name
+    lbl_unsaved_changes: id_unsaved_changes
+    btn_save_changes: id_save_changes
 
     BoxLayout:
         orientation: "horizontal"
@@ -82,6 +84,24 @@
                     padding: 10
                     spacing: 10
 
+            Label:
+                id: id_unsaved_changes
+                text: ""
+                size_hint_y: None
+                height: 25
+                font_size: 24
+                color: 1, 0, 0, 1
+                bold: True
+                opacity: 1
+
+            Button:
+                id: id_save_changes
+                text: "Save"
+                disabled: True
+                size_hint_y: None
+                height: 25
+                on_release: root.save_changes()
+
             Button:
                 text: "Back"
                 size_hint_y: None
@@ -102,6 +122,7 @@
         text: ""
         multiline: False
         on_text_validate: root.on_enter_pressed()
+        on_text: root.on_text_input()
 
     Button:
         id: id_tag_delete
@@ -141,6 +162,7 @@
         multiline: False
         size_hint_x: .4
         on_text_validate: root.on_enter_pressed()
+        on_text: root.on_text_input()
 
     Spinner:
         id: id_lang_to_tag
@@ -152,6 +174,7 @@
         multiline: False
         size_hint_x: .4
         on_text_validate: root.on_enter_pressed()
+        on_text: root.on_text_input()
 
     Button:
         id: id_lesson_term_delete
@@ -161,9 +184,10 @@
         color: 1, 0, 0, 1
         on_release: root.delete_lesson_term()
 
-<AddItemBox>:
+<AddItemBox, AddTagBox>:
     size_hint_y: None
     height: 25
     text: "+"
     font_size: 32
     bold: True
+    on_release: root.add_item()

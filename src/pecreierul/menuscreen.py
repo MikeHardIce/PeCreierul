@@ -34,10 +34,7 @@ class NewLessonPopUp(ModalView):
     def create_lesson(self):
         if not self.input.text.strip() == "":
 
-            app: PeCreierulBaseApp | None = App.get_running_app()
-        
-            if app is None:
-                return
+            app = PeCreierulBaseApp.get_running_app()
 
             with Session(app.engine) as session:
                 lesson = Lesson()
@@ -56,10 +53,7 @@ class LessonBox(BoxLayout):
     grid: GridLayout
 
     def start_training(self):
-        app: PeCreierulBaseApp | None = App.get_running_app()
-
-        if app is None:
-            return
+        app = PeCreierulBaseApp.get_running_app()
 
         train_lesson: TrainLessonScreen = app.manager.get_screen("train_lesson")
 
@@ -68,10 +62,7 @@ class LessonBox(BoxLayout):
         app.manager.current = "train_lesson"
 
     def edit_lesson(self):
-        app: PeCreierulBaseApp | None = App.get_running_app()
-        
-        if app is None:
-            return
+        app = PeCreierulBaseApp.get_running_app()
         
         editLesson: EditLessonScreen = app.manager.get_screen("edit_lesson")
 
@@ -80,11 +71,8 @@ class LessonBox(BoxLayout):
         app.manager.current = "edit_lesson"
 
     def delete_lesson(self):
-        app: PeCreierulBaseApp | None = App.get_running_app()
+        app = PeCreierulBaseApp.get_running_app()
         
-        if app is None:
-            return
-
         with Session(app.engine) as session:
             lesson = app.repository.load_lesson_by_id(session, self.lesson_id)
             if len(lesson.lesson_terms) < 1:
@@ -103,7 +91,7 @@ class LessonGrid(GridLayout):
         Clock.schedule_once(self.load_lessons, 0)
 
     def load_lessons(self, dt):
-        app: PeCreierulBaseApp | None = cast(PeCreierulBaseApp, App.get_running_app())
+        app = PeCreierulBaseApp.get_running_app()
         
         if app is None:
             return

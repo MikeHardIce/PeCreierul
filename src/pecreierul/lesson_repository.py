@@ -34,7 +34,7 @@ class LessonRepository:
         session.add_all(lessons)
 
     def save_tag(self, session: Session, tag: Tag) -> None:
-        session.add(tag)
+        session.merge(tag)
 
     def delete_tag_by_id(self, session: Session, id: int) -> None:
         tag = session.scalar(select(Tag).where(Tag.id == id))
