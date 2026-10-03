@@ -35,11 +35,21 @@ def test_incorrect_answers():
     session = TrainingSession(question_answers, 3, 3)
 
     unit = session.get_next()
-
-    for i in range(0,6):
+    
+    for i in range(0,7):
         if unit is not None:
+            print(f"{i}: {session.get_current_distribution()}")
             session.submit_answer(unit.answer)
             unit = session.get_next()
 
+    print(session.get_current_distribution())
     assert unit is not None
     assert session.submit_answer("bla") == False
+    
+    dist = session.get_current_distribution()
+    exp = [1, 0, 3]
+
+    print(session.get_current_distribution())
+
+    for i in range(0, 3):
+        assert dist[i] == exp[i]

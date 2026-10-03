@@ -57,7 +57,9 @@ class TrainingSession:
         else:
             return None
 
-        self.current_unit = self.stacks[self.current_stack].popleft()
+        self.current_unit = self.stacks[self.current_stack].pop()
+        # Basically only peek, because a wrong answer later should still return the same unit.
+        self.stacks[self.current_stack].append(self.current_unit)
 
         fake_answers = list(set(self.all_answers).difference(set([self.current_unit.answer])))
         self.current_unit.fake_answers = random.choices(fake_answers, k=self.number_of_fake_answers) \
@@ -80,6 +82,7 @@ class TrainingSession:
             return False
 
         is_answer_correct = self.current_unit.answer.lower().strip() == answer.lower().strip()
+        self.stacks[self.current_stack].pop()
 
         if is_answer_correct:
             self.current_stack += 1

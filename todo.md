@@ -14,6 +14,7 @@
 - implement import/export for entire lessons
 
 ## TraininScreen
+- fix when finishing a lesson and starting a new one, the text box is still locked (done)
 - indicat that the lesson is over when it's over
 - implement multiple choice (training object already supports it, maybe chose mode when starting a lesson)
 - maybe settings for stack sizes and number of stacks when starting a lesson

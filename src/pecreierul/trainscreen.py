@@ -22,6 +22,26 @@ from pecreierul.training import TrainingSession, TrainingUnit
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), 'trainscreen.kv'))
 
+class TextAnswerBox(BoxLayout):
+    lesson_screen: TrainLessonScreen
+    text_answer: TextInput = ObjectProperty(None)
+    text_correct: Label = ObjectProperty(None)
+
+    def focus(self, dt = 0):
+        self.text_answer.focus = True
+
+    def set_readonly(self, status: bool = True):
+        self.text_answer.readonly = status
+
+    def on_enter_pressed(self):
+        if self.text_answer.text is not None and len(self.text_answer.text) > 0:
+            self.lesson_screen.on_answer_submitted(self.text_answer.text)
+
+        self.text_answer.text = ""
+
+    def reset_label(self, dt = 0):
+        self.text_correct.text = ""
+
 class TrainLessonScreen(Screen):
 
     lesson_id: int = -1
@@ -38,6 +58,8 @@ class TrainLessonScreen(Screen):
     def on_pre_enter(self, *args):
 
         base_app = PeCreierulBaseApp.get_running_app()
+
+        self.text_answer_box.set_readonly(False)
 
         with Session(base_app.engine) as session:
             lesson = base_app.repository.load_lesson_by_id(session, self.lesson_id)
@@ -74,29 +96,11 @@ class TrainLessonScreen(Screen):
             self.text_question_box.text = unit.question
             Clock.schedule_once(self.text_answer_box.focus, .5)
         else:
-            self.text_answer_box.disable()     
+            self.text_answer_box.set_readonly()
 
 
 
-class TextAnswerBox(BoxLayout):
-    lesson_screen: TrainLessonScreen
-    text_answer: TextInput = ObjectProperty(None)
-    text_correct: Label = ObjectProperty(None)
 
-    def focus(self, dt = 0):
-        self.text_answer.focus = True
-
-    def disable(self):
-        self.text_answer.readonly = True
-
-    def on_enter_pressed(self):
-        if self.text_answer.text is not None and len(self.text_answer.text) > 0:
-            self.lesson_screen.on_answer_submitted(self.text_answer.text)
-
-        self.text_answer.text = ""
-
-    def reset_label(self, dt = 0):
-        self.text_correct.text = ""
 
 class MultipleChoiceAnswerBox(BoxLayout):
     pass
