@@ -48,7 +48,7 @@ class ImporterExporter:
 
         with open(lesson_path, mode="w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
-            writer.writerow(["question", "answers", "tag_question", "tag_answers"])
+            writer.writerow(["question", "tag_question", "answers", "tag_answers"])
             for lesson_term in lesson.lesson_terms:
                 writer.writerow([lesson_term.term1.value.strip(), lesson_term.term1.tag.name
                                  , lesson_term.term2.value.strip(), lesson_term.term2.tag.name])

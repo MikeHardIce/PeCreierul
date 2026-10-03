@@ -2,7 +2,7 @@
 # TODO
 
 ## EditScreen
-- fix import parsing bug "Would Should.csv"
+- fix import parsing bug "Would Should.csv" (done, actually was the export)
 - fix scrolling and display bug when edit screen list is too large
 - tab should jump to the next input element
 - enable renaming of lesson
