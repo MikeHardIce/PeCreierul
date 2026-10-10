@@ -3,15 +3,16 @@
 
 ## EditScreen
 - fix import parsing bug "Would Should.csv" (done, actually was the export)
-- fix scrolling and display bug when edit screen list is too large
+- fix scrolling and display bug when edit screen list is too large (done)
 - tab should jump to the next input element
 - enable renaming of lesson
-- remove delete of tags that are still in use (global)
+- remove "delete of tags" button if they are still being used (global)
 - implement multiple correct answers (maybe ; separator)
 - would be nice to have answer hints to the questions
 
 ## MenuScreen
 - implement import/export for entire lessons
+- multi select lessons for training, where it takes a selection of lesson terms of each lesson
 
 ## TraininScreen
 - fix when finishing a lesson and starting a new one, the text box is still locked (done)
