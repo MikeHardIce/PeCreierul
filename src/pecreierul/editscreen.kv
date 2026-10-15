@@ -42,14 +42,25 @@
             orientation: "vertical"
             size_hint_x: 0.6
 
-            Label:
-                id: id_lesson_name
+            BoxLayout:
+                orientation: "horizontal"
                 size_hint_y: .1
-                text: ""
-                font_size: 24
-                color: 0, 0, 0, 1
-                bold: True
 
+                Widget:
+                    size_hint_x: .2
+
+                TextInput:
+                    id: id_lesson_name
+                    text: ""
+                    halign: "center"
+                    font_size: 24
+                    color: 0, 0, 0, 1
+                    bold: True
+                    on_text: root.on_lesson_name_changing()
+
+                Widget:
+                    size_hint_x: .2
+            
             ScrollView:
                 do_scroll_y: True
                 do_scroll_x: False

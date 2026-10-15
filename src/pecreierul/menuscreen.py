@@ -47,7 +47,7 @@ class NewLessonPopUp(ModalView):
         self.dismiss()
 
 class LessonBox(BoxLayout):
-    lesson_name = ObjectProperty(None)
+    lesson_name: Label = ObjectProperty(None)
     lesson_id: int
 
     grid: GridLayout
@@ -67,6 +67,7 @@ class LessonBox(BoxLayout):
         editLesson: EditLessonScreen = app.manager.get_screen("edit_lesson")
 
         editLesson.lesson_id = self.lesson_id
+        editLesson.lesson_box_ref = self.lesson_name
 
         app.manager.current = "edit_lesson"
 

@@ -235,13 +235,19 @@ class TagBox(BoxLayout):
 class EditLessonScreen(Screen):
     
     lesson_id: int = -1
+    lesson_box_ref: Label
+    loaded: bool = False
     unsaved_changes: bool = False
 
     edit_lesson_list: GridLayout = ObjectProperty(None)
     edit_tag_list: GridLayout = ObjectProperty(None)
-    lesson_name: Label = ObjectProperty(None)
+    lesson_name: TextInput = ObjectProperty(None)
     lbl_unsaved_changes: Label = ObjectProperty(None)
     btn_save_changes: Button = ObjectProperty(None)
+
+    def on_lesson_name_changing(self):
+        if self.loaded:
+            self.set_has_unsaved_changes()
 
     def set_has_unsaved_changes(self):
         self.unsaved_changes = True
@@ -343,7 +349,12 @@ class EditLessonScreen(Screen):
 
                     if box.pending_changes:
                         box.save_to_lesson(session, app.repository, self.lesson_id)
-           
+            
+            if len(self.lesson_name.text.strip()) > 0:
+                lesson = app.repository.load_lesson_by_id(session, self.lesson_id)
+                lesson.name = self.lesson_name.text.strip()
+                app.repository.save_lessons(session, [lesson])
+
             session.commit()
 
         self.reload_all_lesson_data()
@@ -353,10 +364,14 @@ class EditLessonScreen(Screen):
     def back(self):
         
         app = PeCreierulBaseApp.get_running_app()
-        
+
+        if not self.unsaved_changes:
+            self.lesson_box_ref.text = self.lesson_name.text
+
         app.manager.current = "main_menu"
 
     def reload_all_lesson_data(self):
+        self.loaded = False
         app = PeCreierulBaseApp.get_running_app()
         
         self.edit_lesson_list.clear_widgets()
@@ -400,6 +415,7 @@ class EditLessonScreen(Screen):
 
         self.edit_tag_list.add_widget(AddTagBox())
         #self.edit_tag_list.add_widget(TagBox())
+        self.loaded = True
 
     def on_pre_enter(self, *args):
         self.reload_all_lesson_data()
