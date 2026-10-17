@@ -13,6 +13,7 @@
 ## MenuScreen
 - implement import/export for entire lessons
 - multi select lessons for training, where it takes a selection of lesson terms of each lesson
+- show number of vocabularies/entries contained in the lesson boxes (done)
 
 ## TraininScreen
 - fix when finishing a lesson and starting a new one, the text box is still locked (done)
@@ -23,3 +24,4 @@
 
 ## General
 - clean up code once settled
+- improve the look

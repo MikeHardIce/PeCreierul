@@ -26,6 +26,8 @@ var/
 wheels/
 share/python-wheels/
 .installed.cfg
-resources/
+resources/*
+!resources/lessons/
+!resources/lessons/**
 
 poetry.lock

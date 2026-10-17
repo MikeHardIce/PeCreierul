@@ -87,6 +87,7 @@
             size: self.size
 
     lesson_name: id_lesson_name
+    vocabulary_counter: id_vocabulary_counter
     padding: 20, 20
     spacing: 20
     orientation: "vertical"
@@ -98,27 +99,39 @@
         id: id_lesson_name
         font_size: 30
         text_size: self.width, None
+        halign: "center"
+        size_hint_y: .4
         color: .2, .2, .2, 1
 
     BoxLayout:
         orientation: "vertical"
-        padding: 30
-        spacing: 10
+        size_hint_y: .6
 
-        Button:
-            text: "Train"
-            on_release: root.start_training()
+        Label:
+            id: id_vocabulary_counter
+            text: "0"
+            font_size: 25
+            halign: "center"
+            color: .2, .2, .2, 1
 
         BoxLayout:
-            orientation: "horizontal"
+            orientation: "vertical"
+            padding: 10
 
             Button:
-                text: "Edit"
-                on_release: root.edit_lesson();
+                text: "Train"
+                on_release: root.start_training()
 
-            Button:
-                text: "Delete"
-                on_release: root.delete_lesson()
+            BoxLayout:
+                orientation: "horizontal"
+
+                Button:
+                    text: "Edit"
+                    on_release: root.edit_lesson();
+
+                Button:
+                    text: "Delete"
+                    on_release: root.delete_lesson()
     
 
 <LessonPanel>:

@@ -48,9 +48,14 @@ class NewLessonPopUp(ModalView):
 
 class LessonBox(BoxLayout):
     lesson_name: Label = ObjectProperty(None)
+    vocabulary_counter: Label = ObjectProperty(None)
+
     lesson_id: int
 
     grid: GridLayout
+
+    def set_vocabulary_counter(self, number: int = 0):
+        self.vocabulary_counter.text = str(number)
 
     def start_training(self):
         app = PeCreierulBaseApp.get_running_app()
@@ -112,6 +117,7 @@ class LessonGrid(GridLayout):
         box = LessonBox()
         box.lesson_name.text = lesson.name
         box.lesson_id = lesson.id
+        box.set_vocabulary_counter(len(lesson.lesson_terms))
         box.grid = self
         self.add_widget(box,1)
 
