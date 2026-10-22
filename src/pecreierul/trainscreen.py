@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import os
 import random
-from typing import List, cast;
 
-from kivy.app import App
 from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import Screen
-from kivy.uix.button import Button
+from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
@@ -42,13 +40,42 @@ class TextAnswerBox(BoxLayout):
     def reset_label(self, dt = 0):
         self.text_correct.text = ""
 
+class QuestionBox(BoxLayout):
+    def display_question(self, unit: TrainingUnit | None):
+        if unit is not None:
+            self.clear_widgets()
+            if PeCreierulBaseApp.is_path(unit.question):
+                self.create_image(unit.question)
+            else:
+                self.create_label(unit.question)
+
+    def create_label(self, text: str):
+        label = Label(
+            text=text,
+            font_size=32,
+            bold=True,
+            color=(0, 0, 0, 1))
+
+        self.add_widget(label)
+
+    def create_image(self, path: str):
+        image = Image(
+            source=path,
+            allow_stretch=True,
+            keep_ratio=True)
+
+        self.add_widget(image)
+
+class MultipleChoiceAnswerBox(BoxLayout):
+    pass
+
 class TrainLessonScreen(Screen):
 
     lesson_id: int = -1
     training_session: TrainingSession
 
     lesson_name: Label = ObjectProperty(None)
-    text_question_box: Label = ObjectProperty(None)
+    question_box: QuestionBox = ObjectProperty(None)
     text_answer_box: TextAnswerBox = ObjectProperty(None)
     progress_stack: ProgressStacks = ObjectProperty(None)
 
@@ -76,8 +103,7 @@ class TrainLessonScreen(Screen):
 
         unit = self.training_session.get_next()
 
-        if unit is not None:
-            self.text_question_box.text = unit.question
+        self.question_box.display_question(unit)
 
         Clock.schedule_once(self.text_answer_box.focus, 0)
 
@@ -93,17 +119,10 @@ class TrainLessonScreen(Screen):
         unit = self.training_session.get_next()
 
         if unit is not None:
-            self.text_question_box.text = unit.question
+            self.question_box.display_question(unit)
             Clock.schedule_once(self.text_answer_box.focus, .5)
         else:
             self.text_answer_box.set_readonly()
-
-
-
-
-
-class MultipleChoiceAnswerBox(BoxLayout):
-    pass
 
 class ProgressStacks(Widget):
     canvas: Canvas

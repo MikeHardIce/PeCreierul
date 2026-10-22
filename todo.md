@@ -20,7 +20,7 @@
 - indicat that the lesson is over when it's over
 - implement multiple choice (training object already supports it, maybe chose mode when starting a lesson)
 - maybe settings for stack sizes and number of stacks when starting a lesson
-- support image display if question contains a path to an image
+- support image display if question contains a path to an image (done)
 
 ## General
 - clean up code once settled

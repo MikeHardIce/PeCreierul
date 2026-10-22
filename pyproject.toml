@@ -1,9 +1,9 @@
 [project]
 name = "pecreierul"
 version = "0.1.0"
-description = ""
+description = "Train vocabularies and other stuff using stacks"
 authors = [
-    {name = "MikeHardIce",email = "mikehardice@gmail.com"}
+    {name = "MikeHardIce"}
 ]
 readme = "README.md"
 requires-python = ">=3.12,<3.14"

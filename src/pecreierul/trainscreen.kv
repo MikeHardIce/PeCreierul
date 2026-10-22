@@ -10,7 +10,7 @@
     lesson_name: id_lesson_name
     text_answer_box: id_text_answer_box
     progress_stack: id_progress_stack
-    text_question_box: id_question
+    question_box: id_question_box
 
     BoxLayout:
         orientation: "vertical"
@@ -27,13 +27,9 @@
             orientation: "horizontal"
             size_hint_y: .7
             padding: 40
-            Label:
-                id: id_question
-                text: "Question"
-                font_size: 32
-                bold: True
-                color: 0, 0, 0, 1
-
+            QuestionBox:
+                id: id_question_box
+                
             TextAnswerBox:
                 id: id_text_answer_box
 
@@ -55,6 +51,9 @@
                 height: 25
                 text: "Back"
                 on_release: root.back()
+
+<QuestionBox>:
+    orientation: "vertical"
     
 <TextAnswerBox>:
     text_answer: id_answerbox
