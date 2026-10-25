@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import random
+from typing import Tuple
 
 from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import Screen
@@ -14,6 +15,7 @@ from kivy.lang import Builder
 from kivy.clock import Clock
 from kivy.graphics import Color, Line, Canvas
 from sqlalchemy.orm import Session
+from kivy.core.window import Window
 
 from pecreierul.app import PeCreierulBaseApp
 from pecreierul.training import TrainingSession, TrainingUnit
@@ -41,6 +43,10 @@ class TextAnswerBox(BoxLayout):
         self.text_correct.text = ""
 
 class QuestionBox(BoxLayout):
+
+    hint: Label
+    backup: Widget
+
     def display_question(self, unit: TrainingUnit | None):
         if unit is not None:
             self.clear_widgets()
@@ -48,6 +54,23 @@ class QuestionBox(BoxLayout):
                 self.create_image(unit.question)
             else:
                 self.create_label(unit.question)
+
+            self.prepate_hint_label(unit.hint)
+
+    def show_hint(self):
+        self.clear_widgets()
+        self.add_widget(self.hint)
+
+    def show_question(self):
+        self.clear_widgets()
+        self.add_widget(self.backup)
+
+    def prepate_hint_label(self, text: str):
+        self.hint = Label(
+            text=text if text is not None else "",
+            font_size=24,
+            bold=True,
+            color=(0, 0, 0, 1))
 
     def create_label(self, text: str):
         label = Label(
@@ -57,6 +80,7 @@ class QuestionBox(BoxLayout):
             color=(0, 0, 0, 1))
 
         self.add_widget(label)
+        self.backup = label
 
     def create_image(self, path: str):
         image = Image(
@@ -65,6 +89,7 @@ class QuestionBox(BoxLayout):
             keep_ratio=True)
 
         self.add_widget(image)
+        self.backup = image
 
 class MultipleChoiceAnswerBox(BoxLayout):
     pass
@@ -93,9 +118,9 @@ class TrainLessonScreen(Screen):
             self.lesson_name.text = lesson.name
             number_of_sessions = len(lesson.lesson_terms) 
             number_of_sessions = 10 if number_of_sessions > 10 else number_of_sessions
-            train: dict[str, str] = {}
+            train: dict[str, Tuple[str,str]] = {}
             for lesson_term in random.sample(lesson.lesson_terms, k = number_of_sessions):
-                train[lesson_term.term1.value] = lesson_term.term2.value
+                train[lesson_term.term1.value] = lesson_term.term2.value, lesson_term.hint
 
         self.training_session = TrainingSession(train)
         self.progress_stack.draw(self.training_session)
@@ -123,6 +148,31 @@ class TrainLessonScreen(Screen):
             Clock.schedule_once(self.text_answer_box.focus, .5)
         else:
             self.text_answer_box.set_readonly()
+
+    def on_enter(self, *args):
+        Window.bind(on_key_down = self.on_key_down_global)
+        Window.bind(on_key_up = self.on_key_up_global)
+
+
+    def on_leave(self, *args):
+        Window.unbind(on_key_down = self.on_key_down_global)
+        Window.unbind(on_key_up = self.on_key_up_global)
+
+    def on_key_up_global(self, window, keycode, *args):
+
+        if keycode == 308:
+            self.question_box.show_question()
+            return True
+
+        return False
+    
+    def on_key_down_global(self, window, keycode, *args):
+
+        if keycode == 308:
+            self.question_box.show_hint()
+            return True
+
+        return False
 
 class ProgressStacks(Widget):
     canvas: Canvas

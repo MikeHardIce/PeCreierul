@@ -1,17 +1,18 @@
 from collections import deque
-from dataclasses import dataclass
 import random
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 class TrainingUnit:
     question: str
     answer: str
     occurence: int = 0
     fake_answers: List[str] = []
+    hint: str
 
-    def __init__(self, question: str, answer: str):
+    def __init__(self, question: str, answer: str, hint: str = ""):
         self.question = question
         self.answer = answer
+        self.hint = hint
 
 class TrainingSession:
 
@@ -21,15 +22,15 @@ class TrainingSession:
     current_stack: int = 0
     number_of_fake_answers: int = 0
 
-    def __init__(self, question_answers: Dict[str, str], number_of_stacks: int = 5, number_of_fake_answers: int = 4):
+    def __init__(self, question_answers: Dict[str, Tuple[str,str]], number_of_stacks: int = 5, number_of_fake_answers: int = 4):
         """
             Args:
-                question_answers - dictionary consisting of question answer pairs to be trained
+                question_answers - dictionary consisting of question answer/hint pairs to be trained
                 number_of_stacks - number of how many stacks need each unit pass
                 number_of_fake_answers - number of fake answers that will get returned with each unit (fake answers 
                 will be assigned new each time a unit is returned)
         """
-        units = [TrainingUnit(question = k, answer = v) for k,v in question_answers.items()]
+        units = [TrainingUnit(question = k, answer = v[0], hint = v[1]) for k,v in question_answers.items()]
 
         self.all_answers = [u.answer for u in units]
         self.stacks = [deque(units)] + [deque() for _ in range(0, number_of_stacks - 1)]

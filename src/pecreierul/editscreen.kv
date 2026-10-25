@@ -150,7 +150,7 @@
             pos: self.pos
             size: self.size
 
-    orientation: "horizontal"
+    orientation: "vertical"
     sp_from: id_lang_from_tag
     text_from: id_term_from_text
 
@@ -159,40 +159,50 @@
 
     btn_delete: id_lesson_term_delete
 
+    text_hint: id_term_hint
+
     size_hint_y: None 
-    height: 35
+    height: 70
+
+    BoxLayout:
+        orientation: "horizontal"
+        Spinner:
+            id: id_lang_from_tag
+            size_hint_x: .2
+
+        TextInput:
+            id: id_term_from_text
+            text: ""
+            multiline: False
+            size_hint_x: .4
+            on_text_validate: root.on_enter_pressed()
+            on_text: root.on_text_input()
+
+        Spinner:
+            id: id_lang_to_tag
+            size_hint_x: .2
+
+        TextInput:
+            id: id_term_to_text
+            text: ""
+            multiline: False
+            size_hint_x: .4
+            on_text_validate: root.on_enter_pressed()
+            on_text: root.on_text_input()
+
+        Button:
+            id: id_lesson_term_delete
+            text: "X"
+            size_hint_x: None
+            width: 35
+            color: 1, 0, 0, 1
+            on_release: root.delete_lesson_term()
     
-    Spinner:
-        id: id_lang_from_tag
-        size_hint_x: .2
-
     TextInput:
-        id: id_term_from_text
+        id: id_term_hint
         text: ""
-        multiline: False
-        size_hint_x: .4
-        on_text_validate: root.on_enter_pressed()
+        multiline: True
         on_text: root.on_text_input()
-
-    Spinner:
-        id: id_lang_to_tag
-        size_hint_x: .2
-
-    TextInput:
-        id: id_term_to_text
-        text: ""
-        multiline: False
-        size_hint_x: .4
-        on_text_validate: root.on_enter_pressed()
-        on_text: root.on_text_input()
-
-    Button:
-        id: id_lesson_term_delete
-        text: "X"
-        size_hint_x: None
-        width: 35
-        color: 1, 0, 0, 1
-        on_release: root.delete_lesson_term()
 
 <AddItemBox, AddTagBox>:
     size_hint_y: None

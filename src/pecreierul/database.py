@@ -57,5 +57,7 @@ class LessonTerm(Base):
     term1: Mapped[Term] = relationship("Term", foreign_keys="LessonTerm.term1_id", cascade="all, delete-orphan", single_parent=True)
     term2: Mapped[Term] = relationship("Term", foreign_keys="LessonTerm.term2_id", cascade="all, delete-orphan", single_parent=True)
 
+    hint: Mapped[str] = mapped_column(String, nullable=True, default="")
+
     def __repr__(self) -> str:
         return f"id: {self.id} term1: {self.term1.value} ({self.term1.tag.name}) term2: {self.term2.value} ({self.term2.tag.name})"

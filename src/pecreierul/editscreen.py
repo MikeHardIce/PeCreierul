@@ -61,6 +61,8 @@ class TermBox(BoxLayout):
 
     btn_delete: Button = ObjectProperty(None)
 
+    text_hint: TextInput = ObjectProperty(None)
+
     def on_text_input(self, *args):
         if self.loaded:
             app = PeCreierulBaseApp.get_running_app()
@@ -97,6 +99,7 @@ class TermBox(BoxLayout):
             if is_update:
                 lesson_term.term1.value = self.text_from.text
                 lesson_term.term2.value = self.text_to.text
+                lesson_term.hint = self.text_hint.text
 
                 if lesson_term.term1.tag.id != tag_from.id:
                     lesson_term.term1.tag = tag_from
@@ -106,7 +109,7 @@ class TermBox(BoxLayout):
                 
             else:
                 lesson_term = LessonTerm(term1 = Term(value=self.text_from.text, tag=tag_from), term2 = Term(value = self.text_to.text, tag = tag_to))
-
+                lesson_term.hint = self.text_hint.text
                 lesson.lesson_terms.append(lesson_term)
 
             repository.save_lessons(session, [lesson])
@@ -397,6 +400,7 @@ class EditLessonScreen(Screen):
                 box.sp_to.text = lesson_term.term2.tag.name
                 last_to_tag = lesson_term.term2.tag.name
                 box.text_to.text = lesson_term.term2.value
+                box.text_hint.text = lesson_term.hint
 
                 box.loaded = True
                 self.edit_lesson_list.add_widget(box)
