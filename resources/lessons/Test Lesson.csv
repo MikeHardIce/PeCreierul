@@ -1,6 +1,6 @@
-question,tag_question,answers,tag_answers
-what,english,ce,romanian
-how,english,cum,romanian
-who,english,cine,romanian
-how many,english,cât,romanian
-resources/lessons/dino.jpeg,image,dino,romanian
+question,tag_question,answers,tag_answers,hint
+what,english,ce,romanian,
+how,english,cum,romanian,
+who,english,cine,romanian,
+how many,english,cât,romanian,
+resources/lessons/dino.jpeg,image,dino,romanian,That is a dino

@@ -1,5 +1,5 @@
 import os
-from typing import Dict, List, Tuple, cast
+from typing import Callable, Dict, List, Tuple, cast
 from sqlalchemy.orm import Session
 
 from kivy.uix.boxlayout import BoxLayout
@@ -241,6 +241,7 @@ class EditLessonScreen(Screen):
     lesson_box_ref: Label
     loaded: bool = False
     unsaved_changes: bool = False
+    set_vocabulary_counter_ref: Callable[[int], None]
 
     edit_lesson_list: GridLayout = ObjectProperty(None)
     edit_tag_list: GridLayout = ObjectProperty(None)
@@ -370,6 +371,9 @@ class EditLessonScreen(Screen):
 
         if not self.unsaved_changes:
             self.lesson_box_ref.text = self.lesson_name.text
+            with Session(app.engine) as session:
+                cnt_terms = len(app.repository.load_lesson_by_id(session, self.lesson_id).lesson_terms)
+                self.set_vocabulary_counter_ref(cnt_terms)
 
         app.manager.current = "main_menu"
 

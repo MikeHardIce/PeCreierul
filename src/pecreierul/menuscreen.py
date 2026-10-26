@@ -69,10 +69,11 @@ class LessonBox(BoxLayout):
     def edit_lesson(self):
         app = PeCreierulBaseApp.get_running_app()
         
-        editLesson: EditLessonScreen = app.manager.get_screen("edit_lesson")
+        edit_lesson: EditLessonScreen = app.manager.get_screen("edit_lesson")
 
-        editLesson.lesson_id = self.lesson_id
-        editLesson.lesson_box_ref = self.lesson_name
+        edit_lesson.lesson_id = self.lesson_id
+        edit_lesson.lesson_box_ref = self.lesson_name
+        edit_lesson.set_vocabulary_counter_ref = self.set_vocabulary_counter
 
         app.manager.current = "edit_lesson"
 

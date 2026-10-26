@@ -25,9 +25,12 @@ class ImporterExporter:
                             tag_answer = row["tag_answers"].strip()
                             tag1 = tags[tag_question] if tag_question in tags else Tag(name=tag_question)
                             tag2 = tags[tag_answer] if tag_answer in tags else Tag(name=tag_answer)
+                    
                             lesson_term = LessonTerm()
                             lesson_term.term1 = Term(value = row["question"].strip(), tag = tag1)
                             lesson_term.term2 = Term(value = row["answers"].strip(), tag = tag2)
+                            lesson_term.hint = row["hint"] if "hint" in row.keys() else ""
+
                             lesson.lesson_terms.append(lesson_term)
 
                             duplicate_catcher.add(entry)
@@ -48,9 +51,9 @@ class ImporterExporter:
 
         with open(lesson_path, mode="w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
-            writer.writerow(["question", "tag_question", "answers", "tag_answers"])
+            writer.writerow(["question", "tag_question", "answers", "tag_answers", "hint"])
             for lesson_term in lesson.lesson_terms:
                 writer.writerow([lesson_term.term1.value.strip(), lesson_term.term1.tag.name
-                                 , lesson_term.term2.value.strip(), lesson_term.term2.tag.name])
+                                 , lesson_term.term2.value.strip(), lesson_term.term2.tag.name, lesson_term.hint.strip() if lesson_term.hint is not None else ""])
 
         return lesson_path

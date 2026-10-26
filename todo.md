@@ -6,7 +6,7 @@
 - fix scrolling and display bug when edit screen list is too large (done)
 - enable renaming of lesson (done)
 - have answer hints to the questions (done)
-    - import/export (TODO)
+    - import/export (done)
 - use wikipedia to import images as "questions" for a lesson
     - based on a list of keywords "answers" the user has chosen
     - add a note and a link to the license section
