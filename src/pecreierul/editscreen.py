@@ -235,6 +235,20 @@ class TagBox(BoxLayout):
                 print(ex)
                 session.rollback()
 
+class WikiImporter(BoxLayout):
+
+    on_terms_resolved: Callable[[], None]
+
+    lbl_title: Label = ObjectProperty(None)
+    tb_list_of_terms: TextInput = ObjectProperty(None)
+    btn_resolve: Button = ObjectProperty(None)
+
+    def on_resolve_terms(self):
+
+        if self.on_terms_resolved is not None:
+            self.on_terms_resolved()
+        
+
 class EditLessonScreen(Screen):
     
     lesson_id: int = -1
@@ -264,6 +278,14 @@ class EditLessonScreen(Screen):
         self.lbl_unsaved_changes.text = ""
         self.btn_save_changes.disabled = True
         #self.lbl_unsaved_changes.opacity = 0
+
+    def on_wiktionary_pressed(self):
+        wiki = WikiImporter()
+        popup = Popup(title="Wiktionary Import", content=wiki, size_hint = (0.9, 0.9))
+
+        wiki.on_terms_resolved = popup.dismiss
+
+        popup.open()
 
     def on_import_pressed(self):
         content = BoxLayout(orientation="vertical")
@@ -373,7 +395,8 @@ class EditLessonScreen(Screen):
             self.lesson_box_ref.text = self.lesson_name.text
             with Session(app.engine) as session:
                 cnt_terms = len(app.repository.load_lesson_by_id(session, self.lesson_id).lesson_terms)
-                self.set_vocabulary_counter_ref(cnt_terms)
+                if self.set_vocabulary_counter_ref is not None:
+                    self.set_vocabulary_counter_ref(cnt_terms)
 
         app.manager.current = "main_menu"
 

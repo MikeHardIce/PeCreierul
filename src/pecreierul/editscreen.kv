@@ -38,6 +38,12 @@
                 text: "Export"
                 on_release: root.on_export_pressed()
 
+            Button:
+                size_hint_y: None
+                height: 25
+                text: "Wiktionary"
+                on_release: root.on_wiktionary_pressed()
+
         BoxLayout:
             orientation: "vertical"
             size_hint_x: 0.6
@@ -211,3 +217,42 @@
     font_size: 32
     bold: True
     on_release: root.add_item()
+
+<WikiImporter>:
+    orientation: "vertical"
+    lbl_title: id_title
+    tb_list_of_terms: id_tb_list_of_terms
+    btn_resolve: id_btn_resolve
+
+    BoxLayout:
+        orientation: "horizontal"
+        size_hint_y: .2
+        Widget:
+            size_hint_x: .3
+        Label:
+            id: id_title
+            text: "List all the terms you would like to use as answers. Use newline or comma to separate the words."
+            font_size: 24
+        Widget:
+            size_hint_x: .3
+
+    TextInput:
+        id: id_tb_list_of_terms
+        size_hint_y: .7
+        size_hint_x: 1
+        text: ""
+        hint_text: "marvelous, peter out, ..."
+        multiline: True
+
+    BoxLayout:
+        size_hint_y: .1
+
+        Widget:
+            size_hint_x: .8
+
+        Button:
+            id: id_btn_resolve
+            text: "Resolve"
+            size_hint_y: None
+            height: 25
+            on_release: root.on_resolve_terms()
