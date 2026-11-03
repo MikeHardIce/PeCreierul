@@ -224,6 +224,10 @@
     tb_list_of_terms: id_tb_list_of_terms
     btn_resolve: id_btn_resolve
 
+    sp_language: id_sp_language
+    sp_question_tag: id_sp_question_tag
+    sp_answer_tag: id_sp_answer_tag
+
     BoxLayout:
         orientation: "horizontal"
         size_hint_y: .2
@@ -246,13 +250,49 @@
 
     BoxLayout:
         size_hint_y: .1
+        orientation: "horizontal"
 
-        Widget:
-            size_hint_x: .8
+        BoxLayout:
+            size_hint_y: .8
+            orientation: "vertical"
+
+            BoxLayout:
+                orientation: "horizontal"
+
+                Label:
+                    text: "Language"
+
+                Spinner:
+                    id: id_sp_language
+                    values: ["en"]
+                    text: "en"
+
+            BoxLayout:
+                orientation: "horizontal"
+
+                Label:
+                    text: "Question (Tag)"
+
+                Spinner:
+                    id: id_sp_question_tag
+                    values: []
+                    text: ""
+
+            BoxLayout:
+                orientation: "horizontal"
+
+                Label:
+                    text: "Answer (Tag)"
+
+                Spinner:
+                    id: id_sp_answer_tag
+                    values: []
+                    text: ""
 
         Button:
             id: id_btn_resolve
             text: "Resolve"
             size_hint_y: None
+            size_hint_y: .2
             height: 25
             on_release: root.on_resolve_terms()

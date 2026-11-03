@@ -1,7 +1,10 @@
 from datetime import datetime
 import os
 import csv
-from typing import Dict, List
+import requests
+import urllib.parse
+import re
+from typing import Dict, List, Tuple
 from sqlalchemy.orm import Session
 
 from pecreierul.database import Lesson, LessonTerm, Tag, Term
@@ -57,3 +60,41 @@ class ImporterExporter:
                                  , lesson_term.term2.value.strip(), lesson_term.term2.tag.name, lesson_term.hint.strip() if lesson_term.hint is not None else ""])
 
         return lesson_path
+
+    @staticmethod
+    def import_from_wiktionary(lesson: Lesson, terms: List[str], question_tag: Tag, answer_tag: Tag):
+        url = "https://en.wiktionary.org/api/rest_v1/page/definition/"
+        for term in terms:
+            try:
+                url_term = url + urllib.parse.quote(term)
+                headers = {
+                    "User-Agent": "PeCreierul/0.1 (https://github.com/MikeHardIce) python-requests"
+                }
+                response = requests.get(url_term, headers=headers)
+
+                if response.status_code == 200:
+                    for definition, example in ImporterExporter.extract_wiktionary_json_response(response):
+                        lesson_term = LessonTerm()
+                        lesson_term.term1 = Term(value = definition, tag = question_tag)
+                        lesson_term.term2 = Term(value = term, tag = answer_tag)
+                        lesson_term.hint = example
+
+                        lesson.lesson_terms.append(lesson_term)
+
+            except Exception as ex:
+                # TODO: collect which terms didn't work and have some feedback to the user
+                print(ex)
+
+    @staticmethod
+    def extract_wiktionary_json_response(response: requests.Response) -> List[Tuple[str, str]]:
+
+        results: List[Tuple[str, str]] = []
+        js = response.json()
+
+        for content in js["en"]:
+            defi = content["definitions"][0]
+            # TODO: use a proper library
+            definition = re.sub(r"<[^>]+>", "", defi["definition"]).strip()
+            example = re.sub(r"<[^>]+>", "", defi["examples"][0]).strip()
+            results.append((definition, example))
+        return results

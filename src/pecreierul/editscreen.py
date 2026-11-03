@@ -236,19 +236,46 @@ class TagBox(BoxLayout):
                 session.rollback()
 
 class WikiImporter(BoxLayout):
-
+    lesson_id: int = -1
     on_terms_resolved: Callable[[], None]
 
     lbl_title: Label = ObjectProperty(None)
     tb_list_of_terms: TextInput = ObjectProperty(None)
     btn_resolve: Button = ObjectProperty(None)
 
+    sp_language: Spinner = ObjectProperty(None)
+    sp_question_tag: Spinner = ObjectProperty(None)
+    sp_answer_tag: Spinner = ObjectProperty(None)
+
+    def prepare(self):
+        app = PeCreierulBaseApp.get_running_app()
+        
+        with Session(app.engine) as session:
+            tags = app.repository.load_all_tags(session)
+
+            vals = [x.name for x in tags]
+            self.sp_question_tag.values = vals
+            self.sp_question_tag.text = vals[0] if len(vals) > 0 else ""
+            self.sp_answer_tag.values = vals 
+            self.sp_answer_tag.text = vals[0] if len(vals) > 0 else ""
+            
+
     def on_resolve_terms(self):
+
+        app = PeCreierulBaseApp.get_running_app()
+        terms = [term.strip() for line in self.tb_list_of_terms.text.split("\n") for term in line.split(',') if term.strip() ]
+        
+        with Session(app.engine) as session:
+            lesson = app.repository.load_lesson_by_id(session, self.lesson_id)
+            tags = app.repository.load_all_tags(session)
+            qtag = cast(Tag, next(filter(lambda x: x.name == self.sp_question_tag.text, tags), Tag()))
+            atag = cast(Tag, next(filter(lambda x: x.name == self.sp_answer_tag.text, tags), Tag()))
+            ImporterExporter.import_from_wiktionary(lesson, terms, qtag, atag )
+            session.commit()
 
         if self.on_terms_resolved is not None:
             self.on_terms_resolved()
         
-
 class EditLessonScreen(Screen):
     
     lesson_id: int = -1
@@ -283,8 +310,14 @@ class EditLessonScreen(Screen):
         wiki = WikiImporter()
         popup = Popup(title="Wiktionary Import", content=wiki, size_hint = (0.9, 0.9))
 
-        wiki.on_terms_resolved = popup.dismiss
+        def close_and_reload():
+            self.reload_all_lesson_data()
+            popup.dismiss()
 
+        wiki.on_terms_resolved = close_and_reload
+        wiki.lesson_id = self.lesson_id
+
+        wiki.prepare()
         popup.open()
 
     def on_import_pressed(self):
