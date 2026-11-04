@@ -4,7 +4,7 @@ import csv
 import requests
 import urllib.parse
 import re
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, cast
 from sqlalchemy.orm import Session
 
 from pecreierul.database import Lesson, LessonTerm, Tag, Term
@@ -71,7 +71,7 @@ class ImporterExporter:
                     "User-Agent": "PeCreierul/0.1 (https://github.com/MikeHardIce) python-requests"
                 }
                 response = requests.get(url_term, headers=headers)
-
+                print(f"status: {response.status_code} | term: {term} ")
                 if response.status_code == 200:
                     for definition, example in ImporterExporter.extract_wiktionary_json_response(response):
                         lesson_term = LessonTerm()
@@ -92,9 +92,11 @@ class ImporterExporter:
         js = response.json()
 
         for content in js["en"]:
-            defi = content["definitions"][0]
+            defi = cast(dict[str, str], next(filter(lambda x: len(x["definition"]) > 0, content["definitions"]), {}))
             # TODO: use a proper library
             definition = re.sub(r"<[^>]+>", "", defi["definition"]).strip()
-            example = re.sub(r"<[^>]+>", "", defi["examples"][0]).strip()
+            example = ""
+            if "examples" in defi:
+                example = re.sub(r"<[^>]+>", "", defi["examples"][0]).strip()
             results.append((definition, example))
         return results

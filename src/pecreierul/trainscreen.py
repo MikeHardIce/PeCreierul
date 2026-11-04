@@ -70,6 +70,7 @@ class QuestionBox(BoxLayout):
             text=text if text is not None else "",
             font_size=24,
             bold=True,
+            text_size=(500, None),
             color=(0, 0, 0, 1))
 
     def create_label(self, text: str):
@@ -77,6 +78,7 @@ class QuestionBox(BoxLayout):
             text=text,
             font_size=32,
             bold=True,
+            text_size=(500, None),
             color=(0, 0, 0, 1))
 
         self.add_widget(label)
