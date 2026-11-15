@@ -12,7 +12,7 @@
     - add a note and a link to the license section
     - use the "extract" in the json response as hint (replace the occurence of the keyword with stars, remove html tags)
     - example GET https://en.wikipedia.org/api/rest_v1/page/summary/Stegosaurus (don't forget to url encode the keyword)
-- enable the use of wiktionary to import definitions as questions for a lesson
+- enable the use of wiktionary to import definitions as questions for a lesson (done)
     - based on a list of keywords "answers" the user has chosen
     - add the given example as a hint
     - example GET https://en.wiktionary.org/api/rest_v1/page/definition/marvelous
@@ -22,6 +22,7 @@
 
 ## Menu Screen
 - show number of vocabularies/entries contained in the lesson boxes (done)
+- delete lesson, use modal for confirmation (done)
 - implement import/export for entire lessons
 - multi select lessons for training, where it takes a selection of lesson terms of each lesson
 

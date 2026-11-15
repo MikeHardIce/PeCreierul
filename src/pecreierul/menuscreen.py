@@ -15,6 +15,7 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.screenmanager import Screen
 from kivy.uix.modalview import ModalView
 from kivy.uix.textinput import TextInput
+from kivy.uix.popup import Popup
 from kivy.properties import ObjectProperty
 from kivy.clock import Clock
 from sqlalchemy.orm import Session
@@ -78,15 +79,33 @@ class LessonBox(BoxLayout):
         app.manager.current = "edit_lesson"
 
     def delete_lesson(self):
-        app = PeCreierulBaseApp.get_running_app()
-        
-        with Session(app.engine) as session:
-            lesson = app.repository.load_lesson_by_id(session, self.lesson_id)
-            if len(lesson.lesson_terms) < 1:
-                app.repository.delete_lessons(session, [lesson])
-                session.commit()
 
-        self.grid.remove_widget(self)
+        content = BoxLayout(orientation="vertical", spacing=20)
+        content.add_widget(Label(text=f"Are you sure you want to delete lesson \"{self.lesson_name.text}\"", font_size=25))
+        button_panel = BoxLayout(orientation="horizontal", spacing=20)
+        btn_yes = Button(text="Yes", size_hint_y=None, height=40)
+        btn_no = Button(text="No", size_hint_y=None, height=40)
+        button_panel.add_widget(btn_yes)
+        button_panel.add_widget(btn_no)
+        content.add_widget(button_panel)
+        popup = Popup(title="Delete Lesson", content=content, size_hint=(0.5, 0.5))
+
+        popup.open()
+
+        def on_delete(arg):
+            app = PeCreierulBaseApp.get_running_app()
+                    
+            with Session(app.engine) as session:
+                lesson = app.repository.load_lesson_by_id(session, self.lesson_id)
+                if len(lesson.lesson_terms) < 1:
+                    app.repository.delete_lessons(session, [lesson])
+                    session.commit()
+    
+            self.grid.remove_widget(self)
+            popup.dismiss()
+
+        btn_no.bind(on_release=popup.dismiss)
+        btn_yes.bind(on_release=on_delete)
 
 class AddLessonBox(Button):
     pass
