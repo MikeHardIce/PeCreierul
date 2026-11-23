@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 import random
-from typing import Tuple
+from typing import List, Tuple
 
 from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import Screen
@@ -11,6 +11,8 @@ from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
+from kivy.uix.togglebutton import ToggleButton
+from kivy.uix.switch import Switch
 from kivy.lang import Builder
 from kivy.clock import Clock
 from kivy.graphics import Color, Line, Canvas
@@ -21,26 +23,6 @@ from pecreierul.app import PeCreierulBaseApp
 from pecreierul.training import TrainingSession, TrainingUnit
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), 'trainscreen.kv'))
-
-class TextAnswerBox(BoxLayout):
-    lesson_screen: TrainLessonScreen
-    text_answer: TextInput = ObjectProperty(None)
-    text_correct: Label = ObjectProperty(None)
-
-    def focus(self, dt = 0):
-        self.text_answer.focus = True
-
-    def set_readonly(self, status: bool = True):
-        self.text_answer.readonly = status
-
-    def on_enter_pressed(self):
-        if self.text_answer.text is not None and len(self.text_answer.text) > 0:
-            self.lesson_screen.on_answer_submitted(self.text_answer.text)
-
-        self.text_answer.text = ""
-
-    def reset_label(self, dt = 0):
-        self.text_correct.text = ""
 
 class QuestionBox(BoxLayout):
 
@@ -93,8 +75,47 @@ class QuestionBox(BoxLayout):
         self.add_widget(image)
         self.backup = image
 
+class TextAnswerBox(BoxLayout):
+    lesson_screen: TrainLessonScreen
+    text_answer: TextInput = ObjectProperty(None)
+
+    def focus(self, dt = 0):
+        self.text_answer.focus = True
+
+    def display(self, unit: TrainingUnit):
+        self.text_answer.focus = True
+
+    def on_enter_pressed(self):
+        if self.text_answer.text is not None and len(self.text_answer.text) > 0:
+            self.lesson_screen.on_answer_submitted(self.text_answer.text)
+
+        self.text_answer.text = ""
+
 class MultipleChoiceAnswerBox(BoxLayout):
-    pass
+    lesson_screen: TrainLessonScreen
+
+    def display(self, unit: TrainingUnit):
+        self.clear_widgets()
+        answers_toggles: List[ToggleButton] = []
+        for fake in unit.fake_answers:
+            toggle = ToggleButton(text=fake, state="normal")
+            toggle.bind(state=self.on_answer_selected)
+            answers_toggles.append(toggle)
+
+        toggle = ToggleButton(text=unit.answer, state="normal")
+        toggle.bind(state=self.on_answer_selected)
+        answers_toggles.append(toggle)
+
+        random.shuffle(answers_toggles)
+
+        for toggle in answers_toggles:
+            self.add_widget(toggle)
+
+    def on_answer_selected(self, instance, value):
+        if value == "down":
+            text = instance.text
+            if text is not None and len(text) > 0:
+                self.lesson_screen.on_answer_submitted(text)
 
 class TrainLessonScreen(Screen):
 
@@ -102,18 +123,35 @@ class TrainLessonScreen(Screen):
     training_session: TrainingSession
 
     lesson_name: Label = ObjectProperty(None)
+    answer_type_toggle: Switch = ObjectProperty(None)
     question_box: QuestionBox = ObjectProperty(None)
     text_answer_box: TextAnswerBox = ObjectProperty(None)
+    correct_answer: Label = ObjectProperty(None)
     progress_stack: ProgressStacks = ObjectProperty(None)
+    answer_container: BoxLayout = ObjectProperty(None)
+
+    def on_multiple_choice_active(self, active):
+        self.display_answer_container(self.training_session.current_unit, active)
+
+    def display_answer_container(self, unit: TrainingUnit | None, active:bool = False):
+        self.answer_container.clear_widgets()
+        
+        box = MultipleChoiceAnswerBox() if active else TextAnswerBox()
+
+        if unit is not None:
+            box.display(unit)
+
+        box.lesson_screen = self
+
+        self.answer_container.add_widget(box)
 
     def back(self):
         PeCreierulBaseApp.get_running_app().manager.current = "main_menu"
 
     def on_pre_enter(self, *args):
 
+        self.answer_type_toggle.active = False
         base_app = PeCreierulBaseApp.get_running_app()
-
-        self.text_answer_box.set_readonly(False)
 
         with Session(base_app.engine) as session:
             lesson = base_app.repository.load_lesson_by_id(session, self.lesson_id)
@@ -129,8 +167,10 @@ class TrainLessonScreen(Screen):
         self.text_answer_box.lesson_screen = self
 
         unit = self.training_session.get_next()
-
+        
         self.question_box.display_question(unit)
+
+        self.display_answer_container(unit)
 
         Clock.schedule_once(self.text_answer_box.focus, 0)
 
@@ -138,8 +178,10 @@ class TrainLessonScreen(Screen):
         unit: TrainingUnit | None = self.training_session.current_unit
 
         if not self.training_session.submit_answer(answer):
-            self.text_answer_box.text_correct.text = unit.answer if unit is not None else ""
-            Clock.schedule_once(self.text_answer_box.reset_label, 5)
+            self.correct_answer.text = unit.answer if unit is not None else ""
+            def reset (dt):
+                self.correct_answer.text = ""
+            Clock.schedule_once(reset, 5)
 
         self.progress_stack.draw(self.training_session)
 
@@ -147,9 +189,10 @@ class TrainLessonScreen(Screen):
 
         if unit is not None:
             self.question_box.display_question(unit)
+            self.display_answer_container(unit, self.answer_type_toggle.active)
             Clock.schedule_once(self.text_answer_box.focus, .5)
         else:
-            self.text_answer_box.set_readonly()
+            self.answer_container.clear_widgets()
 
     def on_enter(self, *args):
         Window.bind(on_key_down = self.on_key_down_global)

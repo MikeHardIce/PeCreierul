@@ -30,8 +30,8 @@
 - fix when finishing a lesson and starting a new one, the text box is still locked (done)
 - support image display if question contains a path to an image (done)
 - display answer hint by holding "alt" (done)
+- implement multiple choice, maybe use a togle under the lesson title (training object already supports it, maybe chose mode when starting a lesson) (done)
 - indicate that the lesson is over when it's over
-- implement multiple choice (training object already supports it, maybe chose mode when starting a lesson)
 - maybe settings for stack sizes and number of stacks when starting a lesson
 
 ## General

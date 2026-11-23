@@ -9,8 +9,11 @@
     name: "train_lesson"
     lesson_name: id_lesson_name
     text_answer_box: id_text_answer_box
+    correct_answer: id_correct_answer
     progress_stack: id_progress_stack
+    answer_type_toggle: id_answer_type_toggle
     question_box: id_question_box
+    answer_container: id_answer_container
 
     BoxLayout:
         orientation: "vertical"
@@ -23,15 +26,38 @@
             color: 0, 0, 0, 1
             bold: True
         
+        BoxLayout: 
+            orientation: "horizontal"
+            size_hint_y: .1
+            padding: 20
+
+            Label:
+                text: "Multiple Choice:"
+                font_size: 14
+                color: 0, 0, 0, 1
+
+            Switch:
+                id: id_answer_type_toggle
+                active: False
+                on_active: root.on_multiple_choice_active(self.active)
+
+        Label:
+            id: id_correct_answer
+            size_hint_y: .1
+            color: 0.54, 0.0, 0.0, 1.0
+            bold: True
+            font_size: 34  
         BoxLayout:
             orientation: "horizontal"
-            size_hint_y: .7
-            padding: 40
+            size_hint_y: .5
+            padding: 20
             QuestionBox:
                 id: id_question_box
-                
-            TextAnswerBox:
-                id: id_text_answer_box
+
+            BoxLayout:
+                id: id_answer_container 
+                TextAnswerBox:
+                    id: id_text_answer_box
 
         BoxLayout:
             orientation: "horizontal"
@@ -78,3 +104,4 @@
         size_hint_y: .35
 
 <MultipleChoiceAnswerBox>:
+    orientation: "vertical"
